@@ -1,0 +1,10 @@
+Version: 21
+Number of classes: 7
+Labels:
+	['matt2_erratic_1100_0']
+	['matt2_cw_1_cut_to_819_']
+	['matt2_ccw_2_cut_to_819_']
+	['matt2_rightSwipe_3_cut_to_819_']
+	['matt2_leftSwipe_4_cut_to_819_']
+	['matt2_upSwipe_5_cut_to_819_']
+	['matt2_downSwipe_6_cut_to_819_']

@@ -1,0 +1,10 @@
+Version: 19
+Number of classes: 7
+Labels:
+	['Erratic']
+	['Clockwise']
+	['Counter-clockwise']
+	['Right Swipe']
+	['Left Swipe']
+	['Up Swipe']
+	['Down Swipe']

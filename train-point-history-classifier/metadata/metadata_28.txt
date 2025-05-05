@@ -1,0 +1,11 @@
+Version: 28
+Number of classes: 8
+Labels:
+	['big2_0_still_pointer']
+	['big2_1_erratic']
+	['big2_2_ccw']
+	['big2_3_cw']
+	['big2_4_down_swipe']
+	['big2_5_up_swipe']
+	['big2_6_left_swipe']
+	['big2_7_right_swipe']

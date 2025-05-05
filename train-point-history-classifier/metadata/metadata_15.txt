@@ -1,0 +1,10 @@
+Version: 15
+Number of classes: 7
+Labels:
+	['stop']
+	['cw']
+	['ccw']
+	['swipeRight']
+	['swipeLeft']
+	['swipeUp']
+	['swipeDown']
