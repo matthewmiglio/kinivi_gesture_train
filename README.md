@@ -1,9 +1,12 @@
+Kinivi Hand Gesture Recognition Project
 Project Description
-This project is designed to enhance hand-gesture recognition using models sourced from Kinivi's hand-gesture models. The primary purpose is to improve the accuracy and versatility of hand-gesture recognition by adding new training pipelines, incorporating more data, and defining custom gestures. Additionally, the demo file has been modified to support both storage-based and live camera feed demonstrations.
+This project is designed to enhance hand-gesture recognition using models sourced from Kinivi's hand-gesture models. The primary purpose is to improve the accuracy and versatility of hand-gesture recognition by adding new training pipelines, incorporating more data, and defining custom gestures. The project includes both storage-based and live camera feed demonstrations.
 
 Tech Stack
 Python Version: 3.11.0
+
 Dependencies:
+
 opencv-python: 4.11.0.86
 numpy: 1.26.4
 mediapipe: 0.10.21
@@ -13,38 +16,39 @@ pandas: 2.2.3
 seaborn: 0.13.2
 matplotlib: 3.10.1
 How to Use
-a) Training Keypoint
-Prepare the Dataset:
+Training Keypoint Classifier
+Prepare Keypoint Data:
 
-Ensure you have a dataset of images with hand gestures.
-Annotate the keypoints for each gesture using a tool like LabelImg.
-Run the Training Script:
+Use train-keypoint-classifier\add_keypoint_data_to_csv.ipynb to populate keypoint.csv with custom keypoint data.
+Ensure keypoint_classifier_label.csv contains the labels in the same order as the keypoints in keypoint.csv.
+Train the Keypoint Classifier:
 
-Use the provided training script to train the keypoint detection model.
+Run train-keypoint-classifier\train.py to train the keypoint detection model.
 Example command:
-python train_keypoint.py --dataset_path /path/to/dataset --output_model /path/to/save/model
+python train-keypoint-classifier\train.py
 Copy
-b) Training Point History
-Prepare the Point History Data:
+Training Point History Classifier
+Prepare Point History Data:
 
-Collect the point history data for various gestures.
+Collect videos of the hand gestures.
+Use train-point-history-classifier\add_point_history_data.ipynb to convert videos to point history data.
 Format the data appropriately for training.
-Run the Training Script:
+Train the Point History Classifier:
 
-Use the provided training script to train the point history model.
+Run train-point-history-classifier\train.py to train the point history model.
 Example command:
-python train_point_history.py --data_path /path/to/point/history/data --output_model /path/to/save/model
+python train-point-history-classifier\train.py
 Copy
-c) Inference Demo Apps
+Inference Demo Apps
 From Storage
 Prepare the Demo Data:
 
 Ensure you have images or videos stored locally for inference.
 Run the Demo Script:
 
-Use the provided demo script to perform inference on stored data.
+Use test-kinivi-gesture\storage_prediction.py to perform inference on stored data.
 Example command:
-python demo_from_storage.py --input_path /path/to/input/data --model_path /path/to/trained/model
+python test-kinivi-gesture\storage_prediction.py --input_path /path/to/input/data
 Copy
 From Camera
 Set Up the Camera:
@@ -52,8 +56,38 @@ Set Up the Camera:
 Ensure your camera is properly connected and configured.
 Run the Demo Script:
 
-Use the provided demo script to perform live inference using the camera feed.
+Use test-kinivi-gesture\camera_prediction.py to perform live inference using the camera feed.
 Example command:
-python demo_from_camera.py --model_path /path/to/trained/model
+python test-kinivi-gesture\camera_prediction.py
+Copy
+Instructions for Setting Up the Project
+Ensure Required Files are in Place:
+
+test-kinivi-gesture\model\keypoint_classifier\keypoint_classifier.py and test-kinivi-gesture\model\point_history_classifier\point_history_classifier.py must be populated with valid label files: keypoint_classifier_label.csv and point_history_classifier_label.csv.
+Optional Model Training:
+
+You can train your own models using train-point-history-classifier\train.py and train-keypoint-classifier\train.py, and move those files to the model folders.
+Recognized Gestures:
+
+The script recognizes POINT_SIGN_ID (3) as a point gesture and will not classify other gestures (e.g., palm, fist, peace sign, OK).
+Additional Tools
+Label Changer: train-point-history-classifier\isolated_gesture_sets\label_changer.ipynb
+Assembler: train-point-history-classifier\isolated_gesture_sets\assembler.ipynb
+Analysis: train-point-history-classifier\isolated_gesture_sets\analysis.ipynb
+Set Cutter: train-point-history-classifier\isolated_gesture_sets\_set_cutter.ipynb
+These tools can be used to create a full point-history dataset.
+
+Example Commands
+Training Keypoint Classifier
+python train-keypoint-classifier\train.py
+Copy
+Training Point History Classifier
+python train-point-history-classifier\train.py
+Copy
+Inference from Storage
+python test-kinivi-gesture\storage_prediction.py --input_path /path/to/input/data
+Copy
+Inference from Camera
+python test-kinivi-gesture\camera_prediction.py
 Copy
 Feel free to reach out if you have any questions or need further assistance with the project!
