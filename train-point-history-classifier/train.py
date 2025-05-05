@@ -81,10 +81,10 @@ class Metadata:
 versioner = Versioning()
 VERSION = versioner.get_new_version()
 Metadata(VERSION).write_metadata()
-print('='*50)
+print("=" * 50)
 print(f"\n\nTraining version: {VERSION}")
 RANDOM_SEED = 42
-PATIENCE=15
+PATIENCE = 15
 dataset = "point_history.csv"
 model_save_path = f"trains/point_history_classifier{VERSION}.keras"
 os.makedirs("trains", exist_ok=True)
