@@ -7,7 +7,7 @@ import tensorflow as tf
 class KeyPointClassifier(object):
     def __init__(
         self,
-        model_path='model\keypoint_classifier\keypoint_classifier8.tflite',
+        model_path='test-kinivi-gesture\model\keypoint_classifier\keypoint_classifier8.tflite',
         num_threads=1,
     ):
         self.interpreter = tf.lite.Interpreter(model_path=model_path,

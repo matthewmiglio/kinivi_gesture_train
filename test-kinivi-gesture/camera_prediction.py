@@ -12,8 +12,15 @@ import mediapipe as mp
 from model import KeyPointClassifier
 from model import PointHistoryClassifier
 
-POINT_SIGN_ID=3 #vertical point
+"""
+===Instructions===
+1. Make sure test-kinivi-gesture\test-kinivi-gesture\model\keypoint_classifier\keypoint_classifier.py and test-kinivi-gesture\test-kinivi-gesture\model\point_history_classifier\point_history_classifier.py 
+are populated with valid label files: keypoint_classifier_label.csv & point_history_classifier_label.csv
+2. Optionally, you can train your own models using train-point-history-classifier\train.py & train-keypoint-classifier\train.py, and move those files to the model folders.
+3. The script only recognizes POINT_SIGN_ID (3) as a point gesture, and will not point-classify other gestures (e.g. palm, fist, peace sign, OK).
+"""
 
+POINT_SIGN_ID = 3  # vertical point
 
 def get_args():
     parser = argparse.ArgumentParser()
@@ -71,12 +78,12 @@ def main():
     point_history_classifier = PointHistoryClassifier()
 
     with open(
-        "model/keypoint_classifier/keypoint_classifier_label.csv", encoding="utf-8-sig"
+        "test-kinivi-gesture\model\keypoint_classifier/keypoint_classifier_label.csv", encoding="utf-8-sig"
     ) as f:
         keypoint_classifier_labels = csv.reader(f)
         keypoint_classifier_labels = [row[0] for row in keypoint_classifier_labels]
     with open(
-        "model/point_history_classifier/point_history_classifier_label.csv",
+        "test-kinivi-gesture\model\point_history_classifier/point_history_classifier_label.csv",
         encoding="utf-8-sig",
     ) as f:
         point_history_classifier_labels = csv.reader(f)
@@ -258,13 +265,13 @@ def logging_csv(number, mode, landmark_list, point_history_list):
     if mode == 0:
         pass
     if mode == 1 and (0 <= number <= 9):
-        csv_path = "model/keypoint_classifier/keypoint.csv"
+        csv_path = "test-kinivi-gesture\model\keypoint_classifier/keypoint.csv"
         with open(csv_path, "a", newline="") as f:
             writer = csv.writer(f)
             writer.writerow([number, *landmark_list])
         print(f"Added a line to key point csv file.")
     if mode == 2 and (0 <= number <= 9):
-        csv_path = "model/point_history_classifier/point_history.csv"
+        csv_path = "test-kinivi-gesture\model\point_history_classifier/point_history.csv"
         with open(csv_path, "a", newline="") as f:
             writer = csv.writer(f)
             writer.writerow([number, *point_history_list])

@@ -9,8 +9,8 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix, classification_report
 
 RANDOM_SEED = 42
-dataset = "model/point_history_classifier/point_history.csv"
-model_save_path = "model/point_history_classifier/point_history_classifier2.hdf5"
+dataset = "test-kinivi-gesture\model\point_history_classifier/point_history.csv"
+model_save_path = "test-kinivi-gesture\model\point_history_classifier/point_history_classifier2.hdf5"
 NUM_CLASSES = 4
 TIME_STEPS = 16
 DIMENSION = 2
@@ -96,7 +96,7 @@ y_pred = np.argmax(Y_pred, axis=1)
 print_confusion_matrix(y_test, y_pred)
 model.save(model_save_path, include_optimizer=False)
 model = tf.keras.models.load_model(model_save_path)
-tflite_save_path = "model/point_history_classifier/point_history_classifier.tflite"
+tflite_save_path = "test-kinivi-gesture\model\point_history_classifier/point_history_classifier.tflite"
 converter = tf.lite.TFLiteConverter.from_keras_model(
     model
 )  # converter = tf.lite.TFLiteConverter.from_saved_model(saved_model_path)

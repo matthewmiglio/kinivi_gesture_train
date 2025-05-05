@@ -15,18 +15,24 @@ import mediapipe as mp
 from model import KeyPointClassifier
 from model import PointHistoryClassifier
 
+"""
+===Instructions===
+1. Make sure test-kinivi-gesture\test-kinivi-gesture\model\keypoint_classifier\keypoint_classifier.py and test-kinivi-gesture\test-kinivi-gesture\model\point_history_classifier\point_history_classifier.py 
+are populated with valid label files: keypoint_classifier_label.csv & point_history_classifier_label.csv
+2. Optionally, you can train your own models using train-point-history-classifier\train.py & train-keypoint-classifier\train.py, and move those files to the model folders.
+3. The script only recognizes POINT_SIGN_ID (3) as a point gesture, and will not point-classify other gestures (e.g. palm, fist, peace sign, OK).
+"""
 
 USE_STATIC_IMAGE_MODE = False
 MIN_DETECTION_CONFIDENCE = 0.6
 MIN_TRACKING_CONFIDENCE = 0.6
-SWIPE_TOL = 35
-SHOW_PALM_RECTANGLE = True
-LOOP = False
-POINT_SIGN_ID=3 #vertical point
+LOOP = True
+POINT_SIGN_ID = 3  # vertical point
+
 
 def read_keypoint_classifier_labels():
     with open(
-        "model/keypoint_classifier/keypoint_classifier_label.csv", encoding="utf-8-sig"
+        "test-kinivi-gesture\model\keypoint_classifier/keypoint_classifier_label.csv", encoding="utf-8-sig"
     ) as f:
         keypoint_classifier_labels = csv.reader(f)
         keypoint_classifier_labels = [row[0] for row in keypoint_classifier_labels]
@@ -35,7 +41,7 @@ def read_keypoint_classifier_labels():
 
 def read_point_history_classifier_labels():
     with open(
-        "model/point_history_classifier/point_history_classifier_label.csv",
+        "test-kinivi-gesture\model\point_history_classifier/point_history_classifier_label.csv",
         encoding="utf-8-sig",
     ) as f:
         point_history_classifier_labels = csv.reader(f)
@@ -45,17 +51,9 @@ def read_point_history_classifier_labels():
         return point_history_classifier_labels
 
 
-
-def test_gesture_from_video_or_folder(path, logging_mode=0, gesture_number=-1):
-    """
-    logging_mode:
-        0: No logging
-        1: Keypoint classifier logging
-        2: Point history classifier logging
-    gesture_number:
-        the number of the gesture that we're adding to the data file
-    """
-
+def test_gesture_from_video_or_folder(
+    path,
+):
     mp_hands = mp.solutions.hands
     hands = mp_hands.Hands(
         static_image_mode=USE_STATIC_IMAGE_MODE,
@@ -84,7 +82,6 @@ def test_gesture_from_video_or_folder(path, logging_mode=0, gesture_number=-1):
         print(f"WARNING! This path is neither a folder nor a file: {path}")
         return
 
-    # loop the video
     while True:
         # play video once
         for image in images:
@@ -112,16 +109,10 @@ def test_gesture_from_video_or_folder(path, logging_mode=0, gesture_number=-1):
                     pre_processed_point_history_list = pre_process_point_history(
                         debug_image, point_history, desired_length=16
                     )
-                    logging_csv(
-                        gesture_number,
-                        logging_mode,
-                        pre_processed_landmark_list,
-                        pre_processed_point_history_list,
-                    )
 
                     hand_sign_id = keypoint_classifier(pre_processed_landmark_list)
                     hand_sign_string = hand_sign_id_to_string(hand_sign_id)
-                    # print(f'Current hand sign string')
+                    print(f"Current hand sign string")
 
                     if hand_sign_id == POINT_SIGN_ID:  # Point gesture
                         point_history.append(landmark_list[8])
@@ -138,7 +129,7 @@ def test_gesture_from_video_or_folder(path, logging_mode=0, gesture_number=-1):
                     current_finger_gesture_string = finger_gesture_id_to_string(
                         finger_gesture_id
                     )
-                    # print(f'Current finger gesture: {current_finger_gesture_string}')
+                    print(f"Current finger gesture: {current_finger_gesture_string}")
 
                     finger_gesture_history.append(finger_gesture_id)
                     finger_gesture_history_count_info = Counter(
@@ -155,10 +146,7 @@ def test_gesture_from_video_or_folder(path, logging_mode=0, gesture_number=-1):
                         dominant_finger_gesture_id
                     )
 
-
-                    debug_image = draw_bounding_rect(
-                        SHOW_PALM_RECTANGLE, debug_image, brect
-                    )
+                    debug_image = draw_bounding_rect(True, debug_image, brect)
                     debug_image = draw_landmarks(debug_image, landmark_list)
                     debug_image = draw_info_text(
                         debug_image,
@@ -167,12 +155,13 @@ def test_gesture_from_video_or_folder(path, logging_mode=0, gesture_number=-1):
                         keypoint_classifier_labels[hand_sign_id],
                         point_history_classifier_labels[dominant_finger_gesture_id],
                     )
+                    print(f"Dominant finger gesture: {domaint_finger_gesture_string}")
 
             else:
                 point_history.append([0, 0])
 
             debug_image = draw_point_history(debug_image, point_history)
-            debug_image = draw_info(debug_image, 999, 0, gesture_number)
+            debug_image = draw_info(debug_image, 999, 0, -999)
 
             cv.imshow("Hand Gesture Recognition", debug_image)
 
@@ -184,10 +173,10 @@ def test_gesture_from_video_or_folder(path, logging_mode=0, gesture_number=-1):
 
 def hand_sign_id_to_string(id):
     index2label = {}
-    csv_path = r'model\keypoint_classifier\keypoint_classifier_label.csv'
+    csv_path = r"test-kinivi-gesture\model\keypoint_classifier\keypoint_classifier_label.csv"
     with open(csv_path, encoding="utf-8-sig") as f:
         rows = csv.reader(f)
-        for i,row in enumerate(rows):
+        for i, row in enumerate(rows):
             index2label[i] = str(row)
 
     return index2label[id]
@@ -195,99 +184,13 @@ def hand_sign_id_to_string(id):
 
 def finger_gesture_id_to_string(id):
     index2label = {}
-    csv_path = r'model\point_history_classifier\point_history_classifier_label.csv'
+    csv_path = r"test-kinivi-gesture\model\point_history_classifier\point_history_classifier_label.csv"
     with open(csv_path, encoding="utf-8-sig") as f:
         rows = csv.reader(f)
-        for i,row in enumerate(rows):
+        for i, row in enumerate(rows):
             index2label[i] = str(row)
 
     return index2label[id]
-    
-
-   
-
-
-def get_args():
-    parser = argparse.ArgumentParser()
-
-    parser.add_argument("--device", type=int, default=0)
-    parser.add_argument("--width", help="cap width", type=int, default=960)
-    parser.add_argument("--height", help="cap height", type=int, default=540)
-
-    parser.add_argument("--use_static_image_mode", action="store_true")
-    parser.add_argument(
-        "--min_detection_confidence",
-        help="min_detection_confidence",
-        type=float,
-        default=0.7,
-    )
-    parser.add_argument(
-        "--min_tracking_confidence",
-        help="min_tracking_confidence",
-        type=int,
-        default=0.5,
-    )
-    parser.add_argument("--fps", help="frames per second", type=int, default=30)
-    parser.add_argument("--loop", help="loop video feed", action="store_true")
-
-    args = parser.parse_args()
-
-    return args
-
-
-def detect_swipe(finger_gesture_id, hand_sign_id, point_history, history_length):
-    # no swipes if we're not pointing!
-    # if hand_sign_id != 2 or finger_gesture_id != 3:
-    #     print(f'Bad hand sign or finger gesture! hand_sign_id:  {hand_sign_id} | inger_gesture_id: {finger_gesture_id}')
-    #     return None
-
-    # if len(point_history) < history_length:
-    #     print(f'bad point_history length')
-    #     return None
-
-    # calculate total difference for this whole gesture
-    start_point = point_history[0]
-    end_point = point_history[-1]
-    delta_x = end_point[0] - start_point[0]
-    delta_y = end_point[1] - start_point[1]
-
-    # calculate partial gestures
-    end_point = point_history[-1]
-    lookback_ratio = 0.3
-    lookback_index = int(len(point_history) * lookback_ratio)
-    lookback_point = point_history[lookback_index]
-    delta_x = end_point[0] - lookback_point[0]
-    delta_y = end_point[1] - lookback_point[1]
-
-    swipe_class = "None"
-
-    # if the horizontal swipe is stronger than veritcal swipe, classify it as a horizontal swipe
-    if abs(delta_x) > abs(delta_y):
-        if delta_x < -1 * SWIPE_TOL:
-            swipe_class = "Left Swipe"
-        elif delta_x > SWIPE_TOL:
-            swipe_class = "Right Swipe"
-    else:
-        if delta_y < -1 * SWIPE_TOL:
-            swipe_class = "Up Swipe"
-        elif delta_y > SWIPE_TOL:
-            swipe_class = "Down Swipe"
-
-    if max(delta_y, delta_x, int(SWIPE_TOL * 0.8)) != int(SWIPE_TOL * 0.8):
-        print(
-            "Finger Gesture ID: {} |  History length: {} | Delta X: {:^5} | Delta Y: {:^5} | Swipe class: {:^12}".format(
-                finger_gesture_id, len(point_history), delta_x, delta_y, swipe_class
-            )
-        )
-
-    if (
-        abs(delta_x) > abs(delta_y) and abs(delta_x) > 20
-    ):  # Threshold for swipe detection
-        if delta_x > 0:
-            return "Right Swipe"
-        else:
-            return "Left Swipe"
-    return None
 
 
 def avi_to_images(video_file):
@@ -303,19 +206,6 @@ def avi_to_images(video_file):
         frame_count += 1
     cap.release()
     return images
-
-
-def select_mode(key, mode):
-    number = -1
-    if 48 <= key <= 57:  # 0 ~ 9
-        number = key - 48
-    if key == 110:  # n
-        mode = 0
-    if key == 107:  # k
-        mode = 1
-    if key == 104:  # h
-        mode = 2
-    return number, mode
 
 
 def calc_bounding_rect(image, landmarks):
@@ -422,7 +312,7 @@ def logging_csv(number, logging_mode, landmark_list, point_history_list):
     if logging_mode == 0:
         pass
     if logging_mode == 1:
-        csv_path = "model/keypoint_classifier/keypoint.csv"
+        csv_path = "test-kinivi-gesture\model\keypoint_classifier/keypoint.csv"
         with open(csv_path, "a", newline="") as f:
             writer = csv.writer(f)
             if writing_mode is True:
@@ -436,7 +326,7 @@ def logging_csv(number, logging_mode, landmark_list, point_history_list):
             if print_mode:
                 print(f"Point history is incomplete... not logging this line!")
             return
-        csv_path = "model/point_history_classifier/point_history.csv"
+        csv_path = "test-kinivi-gesture\model\point_history_classifier/point_history.csv"
         with open(csv_path, "a", newline="") as f:
             writer = csv.writer(f)
             if writing_mode is True:
@@ -831,11 +721,7 @@ def draw_info(image, fps, mode, number):
 
 
 if __name__ == "__main__":
-    cut_frames_folders = r"C:\my_files\data\ipn_gesture_videos"
-    videos = os.listdir(cut_frames_folders)
-    random.shuffle(videos)
-    for frames_folder in os.listdir(cut_frames_folders):
-        frames_folder_path = os.path.join(cut_frames_folders, frames_folder)
-        test_gesture_from_video_or_folder(
-            frames_folder_path, logging_mode=0, gesture_number=-1
-        )
+    gesture_video = r"C:\my_files\data\matt_gesture\labeled_videos\ccw\ccw.mp4"
+    test_gesture_from_video_or_folder(
+        gesture_video,
+    )
