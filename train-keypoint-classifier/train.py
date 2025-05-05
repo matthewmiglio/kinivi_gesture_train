@@ -1,8 +1,19 @@
-import csv
 import numpy as np
 import tensorflow as tf
 from sklearn.model_selection import train_test_split
 import os
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+from sklearn.metrics import confusion_matrix, classification_report
+
+"""
+===Instructions===
+1. Create a CSV file named "keypoint.csv" and "keypoint_classifier_label.csv" in the same directory as this script.
+2. Use add_keypoint_data_to_csv.ipynb to populate this file with custom keypoint data
+3. Your keypoint_classifier_label.csv must contain 1 column, no header, and the labels must be in the same order as the keypoints in the keypoint.csv file.
+4. The script will produce a trained model in the "trains" folder.
+"""
 
 
 def count_keypoint_classes():
@@ -51,7 +62,7 @@ dataset = "keypoint.csv"
 model_save_path = f"trains/keypoint_classifier{version}.keras"
 tflite_save_path = f"trains/keypoint_classifier{version}.tflite"
 NUM_CLASSES = count_keypoint_classes()
-print(f'\nNumber of classes: {NUM_CLASSES}\n')
+print(f"\nNumber of classes: {NUM_CLASSES}\n")
 X_dataset = np.loadtxt(
     dataset, delimiter=",", dtype="float32", usecols=list(range(1, (21 * 2) + 1))
 )
@@ -90,10 +101,7 @@ model = tf.keras.models.load_model(model_save_path)
 predict_result = model.predict(np.array([X_test[0]]))
 print(np.squeeze(predict_result))
 print(np.argmax(np.squeeze(predict_result)))
-import pandas as pd
-import seaborn as sns
-import matplotlib.pyplot as plt
-from sklearn.metrics import confusion_matrix, classification_report
+
 
 
 def print_confusion_matrix(y_true, y_pred, report=True):

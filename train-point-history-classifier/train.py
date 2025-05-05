@@ -8,6 +8,14 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix, classification_report
 import os
 
+"""
+===Instructions===
+1. Create a CSV file named "point_history.csv" and "point_history_classifier_label.csv" in the same directory as this script.
+2. Use add_point_history_data.ipynb to populate this file with custom point-history data
+3. Your point_history_classifier_label.csv must contain 1 column, no header, and the labels must be in the same order as the point-history labels in the point_history.csv file.
+4. The script will produce a trained model in the "trains" folder.
+5. The script will also produce a metadata file in the "metadata" folder, which contains the version number and the label information about this model.
+"""
 
 def read_csv(file_path):
     with open(file_path, mode="r", encoding="utf-8") as file:
