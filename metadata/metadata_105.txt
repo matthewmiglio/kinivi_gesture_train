@@ -1,0 +1,11 @@
+Version: 105
+Number of classes: 8
+Labels:
+	['big3cut_0_still_pointer_cut_to_1000_']
+	['big3cut_1_erratic_cut_to_1000_']
+	['big3cut_2_ccw_cut_to_1000_']
+	['big3cut_3_cw_cut_to_1000_']
+	['big3cut_4_down_swipe_cut_to_1000_']
+	['big3cut_5_up_swipe_cut_to_1000_']
+	['synthetic_first_left_swipe_6']
+	['big3cut_7_right_swipe_cut_to_1000_']
