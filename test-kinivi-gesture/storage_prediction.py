@@ -721,7 +721,7 @@ def draw_info(image, fps, mode, number):
 
 
 if __name__ == "__main__":
-    gesture_video = r"C:\my_files\data\matt_gesture\labeled_videos\ccw\ccw.mp4"
+    gesture_video = r"C:\my_files\data\matt_gesture\labeled_videos\erratic\WIN_20250502_20_17_38_Pro.mp4"
     test_gesture_from_video_or_folder(
         gesture_video,
     )
