@@ -25,7 +25,7 @@ def read_csv(file_path):
 
 
 def count_keypoint_classes():
-    keypoint_file_path = "point_history.csv"
+    keypoint_file_path = "train-point-history-classifier/point_history.csv"
     seen_lables = []
     with open(keypoint_file_path, "r") as file:
         lines = file.readlines()
@@ -35,6 +35,21 @@ def count_keypoint_classes():
                 seen_lables.append(label)
     return len(seen_lables)
 
+
+def print_confusion_matrix(y_true, y_pred, report=True):
+    labels = sorted(list(set(y_true)))
+    cmx_data = confusion_matrix(y_true, y_pred, labels=labels)
+
+    df_cmx = pd.DataFrame(cmx_data, index=labels, columns=labels)
+
+    fig, ax = plt.subplots(figsize=(7, 6))
+    sns.heatmap(df_cmx, annot=True, fmt="g", square=False)
+    ax.set_ylim(len(set(y_true)), 0)
+    plt.show()
+
+    if report:
+        print("Classification Report")
+        print(classification_report(y_test, y_pred))
 
 class Versioning:
     def __init__(self):
@@ -71,7 +86,7 @@ class Metadata:
 
     def write_metadata(self):
         labels_count = count_keypoint_classes()
-        labels_file_path = "point_history_classifier_label.csv"
+        labels_file_path = "train-point-history-classifier/point_history_classifier_label.csv"
         rows = read_csv(labels_file_path)
         metadata_text = ""
         metadata_text += f"Version: {self.version}\n"
@@ -85,7 +100,7 @@ class Metadata:
         print(f"Wrote metadata for this model to {self.metadata_file_path}")
         print(metadata_text)
 
-
+train_folder = 'train-point-history-classifier/trains'
 versioner = Versioning()
 VERSION = versioner.get_new_version()
 Metadata(VERSION).write_metadata()
@@ -93,9 +108,10 @@ print("=" * 50)
 print(f"\n\nTraining version: {VERSION}")
 RANDOM_SEED = 42
 PATIENCE = 15
-dataset = "point_history.csv"
-model_save_path = f"trains/point_history_classifier{VERSION}.keras"
-os.makedirs("trains", exist_ok=True)
+dataset = "train-point-history-classifier/point_history.csv"
+modeL_save_name = f"point_history_classifier{VERSION}.keras"
+model_save_path = os.path.join(train_folder, modeL_save_name)
+os.makedirs(train_folder, exist_ok=True)
 NUM_CLASSES = count_keypoint_classes()
 print(f"Number of classes: {NUM_CLASSES}")
 input("\nReady to train? Press Enter to continue...")
@@ -164,20 +180,7 @@ print(np.squeeze(predict_result))
 print(np.argmax(np.squeeze(predict_result)))
 
 
-def print_confusion_matrix(y_true, y_pred, report=True):
-    labels = sorted(list(set(y_true)))
-    cmx_data = confusion_matrix(y_true, y_pred, labels=labels)
 
-    df_cmx = pd.DataFrame(cmx_data, index=labels, columns=labels)
-
-    fig, ax = plt.subplots(figsize=(7, 6))
-    sns.heatmap(df_cmx, annot=True, fmt="g", square=False)
-    ax.set_ylim(len(set(y_true)), 0)
-    plt.show()
-
-    if report:
-        print("Classification Report")
-        print(classification_report(y_test, y_pred))
 
 
 Y_pred = model.predict(X_test)
@@ -186,7 +189,7 @@ y_pred = np.argmax(Y_pred, axis=1)
 print_confusion_matrix(y_test, y_pred)
 model.save(model_save_path, include_optimizer=False)
 model = tf.keras.models.load_model(model_save_path)
-tflite_save_path = f"trains/point_history_classifier{VERSION}.tflite"
+tflite_save_path = model_save_path.replace(".keras", ".tflite")
 converter = tf.lite.TFLiteConverter.from_keras_model(model)
 converter.optimizations = [tf.lite.Optimize.DEFAULT]
 tflite_quantized_model = converter.convert()
