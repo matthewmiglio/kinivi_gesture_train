@@ -1,0 +1,11 @@
+Version: 102
+Number of classes: 8
+Labels:
+	['still_pointer']
+	['erratic']
+	['ccw']
+	['cw']
+	['down_swipe']
+	['up_swipe']
+	['left_swipe']
+	['right_swipe']
