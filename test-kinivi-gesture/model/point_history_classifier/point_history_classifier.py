@@ -7,7 +7,7 @@ import tensorflow as tf
 class PointHistoryClassifier(object):
     def __init__(
         self,
-        model_path="test-kinivi-gesture\model\point_history_classifier/point_history_classifier28.tflite",
+        model_path="test-kinivi-gesture\model\point_history_classifier/point_history_classifier102.tflite",
         score_th=0.5,
         invalid_value=0,
         num_threads=1,
