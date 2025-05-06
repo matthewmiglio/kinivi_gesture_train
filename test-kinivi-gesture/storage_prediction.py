@@ -81,6 +81,10 @@ def test_gesture_from_video_or_folder(
     else:
         print(f"WARNING! This path is neither a folder nor a file: {path}")
         return
+    
+    hand_sign_string=None
+    domaint_finger_gesture_string=None
+    most_common_gesture_occurence_ratio=None
 
     while True:
         # play video once
@@ -148,20 +152,25 @@ def test_gesture_from_video_or_folder(
 
                     debug_image = draw_bounding_rect(True, debug_image, brect)
                     debug_image = draw_landmarks(debug_image, landmark_list)
-                    debug_image = draw_info_text(
-                        debug_image,
-                        brect,
-                        handedness,
-                        keypoint_classifier_labels[hand_sign_id],
-                        point_history_classifier_labels[dominant_finger_gesture_id],
-                    )
+                    debug_image = draw_info(
+                image,
+                hand_sign_string,
+                domaint_finger_gesture_string,
+                most_common_gesture_occurence_ratio,hands_exist=True,
+            )
                     print(f"Dominant finger gesture: {domaint_finger_gesture_string}")
 
             else:
                 point_history.append([0, 0])
 
-            debug_image = draw_point_history(debug_image, point_history)
-            debug_image = draw_info(debug_image, 999, 0, -999)
+                debug_image = draw_point_history_trail(debug_image, point_history)
+                debug_image = draw_info(
+                    image,
+                    hand_sign_string,
+                    domaint_finger_gesture_string,
+                    most_common_gesture_occurence_ratio,
+                    hands_exist=False,
+                )
 
             cv.imshow("Hand Gesture Recognition", debug_image)
 
@@ -173,7 +182,9 @@ def test_gesture_from_video_or_folder(
 
 def hand_sign_id_to_string(id):
     index2label = {}
-    csv_path = r"test-kinivi-gesture\model\keypoint_classifier\keypoint_classifier_label.csv"
+    csv_path = (
+        r"test-kinivi-gesture\model\keypoint_classifier\keypoint_classifier_label.csv"
+    )
     with open(csv_path, encoding="utf-8-sig") as f:
         rows = csv.reader(f)
         for i, row in enumerate(rows):
@@ -265,7 +276,7 @@ def pre_process_landmark(landmark_list):
 
 def pre_process_point_history(image, point_history, desired_length):
     if len(point_history) < desired_length:
-        # print(f'WARNING! Point history is too small t preprocess! Returning empty list')
+        # print(f'WARNING! Point history is too small to preprocess! Returning empty list')
         return []
 
     elif len(point_history) > desired_length:
@@ -326,7 +337,9 @@ def logging_csv(number, logging_mode, landmark_list, point_history_list):
             if print_mode:
                 print(f"Point history is incomplete... not logging this line!")
             return
-        csv_path = "test-kinivi-gesture\model\point_history_classifier/point_history.csv"
+        csv_path = (
+            "test-kinivi-gesture\model\point_history_classifier/point_history.csv"
+        )
         with open(csv_path, "a", newline="") as f:
             writer = csv.writer(f)
             if writing_mode is True:
@@ -662,7 +675,7 @@ def draw_info_text(image, brect, handedness, hand_sign_text, finger_gesture_text
     return image
 
 
-def draw_point_history(image, point_history):
+def draw_point_history_trail(image, point_history):
     for index, point in enumerate(point_history):
         if point[0] != 0 and point[1] != 0:
             cv.circle(
@@ -672,56 +685,40 @@ def draw_point_history(image, point_history):
     return image
 
 
-def draw_info(image, fps, mode, number):
-    cv.putText(
-        image,
-        "FPS:" + str(fps),
-        (10, 30),
-        cv.FONT_HERSHEY_SIMPLEX,
-        1.0,
-        (0, 0, 0),
-        4,
-        cv.LINE_AA,
-    )
-    cv.putText(
-        image,
-        "FPS:" + str(fps),
-        (10, 30),
-        cv.FONT_HERSHEY_SIMPLEX,
-        1.0,
-        (255, 255, 255),
-        2,
-        cv.LINE_AA,
-    )
-
-    mode_string = ["Logging Key Point", "Logging Point History"]
-    if 1 <= mode <= 2:
+def draw_info(image,
+        hand_sign_string,
+        domaint_finger_gesture_string,
+        most_common_gesture_occurence_ratio,hands_exist):
+    texts = [
+        f"Hands exist: {hands_exist}",
+        f"Hand sign: {hand_sign_string}",
+        f"Gesture class {domaint_finger_gesture_string}",
+        f"Gesture % {most_common_gesture_occurence_ratio}",
+    ]
+    y = 20
+    y_gap = 30
+    x = 10
+    font = cv.FONT_HERSHEY_SIMPLEX
+    font_scale = 0.6
+    thickness = 2
+    for text in texts:
         cv.putText(
             image,
-            "MODE:" + mode_string[mode - 1],
-            (10, 90),
-            cv.FONT_HERSHEY_SIMPLEX,
-            0.6,
+            text,
+            (x, y),
+            font,
+            font_scale,
             (255, 255, 255),
-            1,
+            thickness,
             cv.LINE_AA,
         )
-        if 0 <= number <= 9:
-            cv.putText(
-                image,
-                "NUM:" + str(number),
-                (10, 110),
-                cv.FONT_HERSHEY_SIMPLEX,
-                0.6,
-                (255, 255, 255),
-                1,
-                cv.LINE_AA,
-            )
+        y += y_gap
+
     return image
 
 
 if __name__ == "__main__":
-    gesture_video = r"C:\my_files\data\matt_gesture\labeled_videos\erratic\WIN_20250502_20_17_38_Pro.mp4"
+    gesture_video = r"C:\my_files\data\ipn_gesture_videos\1CM1_1_R_#220.avi"
     test_gesture_from_video_or_folder(
         gesture_video,
     )
