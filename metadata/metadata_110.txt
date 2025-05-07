@@ -1,0 +1,11 @@
+Version: 110
+Number of classes: 8
+Labels:
+	['stop']
+	['cw']
+	['ccw']
+	['erratic']
+	['downswipe']
+	['upswipe']
+	['leftswipe']
+	['rightswipe']
