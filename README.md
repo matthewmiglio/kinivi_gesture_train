@@ -1,6 +1,9 @@
 # 🤖 Kinivi Hand Gesture Recognition Project
 
 Enhance hand gesture recognition using Kinivi’s models. This project improves accuracy and flexibility by supporting custom gestures, new training pipelines, and both live and storage-based demos.
+
+This project is based on Kinivi's work here: https://github.com/kinivi/hand-gesture-recognition-mediapipe
+
 ![image](https://github.com/user-attachments/assets/69bd01b1-2e6b-495f-9ee8-da1f2200d6d5)
 
 ---
