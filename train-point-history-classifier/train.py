@@ -48,9 +48,9 @@ def print_confusion_matrix(y_true, y_pred, report=True):
     ax.set_ylim(len(set(y_true)), 0)
     plt.show()
 
-    if report:
-        print("Classification Report")
-        print(classification_report(y_test, y_pred))
+    # if report:
+    # print("Classification Report")
+    # print(classification_report(y_test, y_pred))
 
 
 class Versioning:

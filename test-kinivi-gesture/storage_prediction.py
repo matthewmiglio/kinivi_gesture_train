@@ -32,7 +32,8 @@ POINT_SIGN_ID = 3  # vertical point
 
 def read_keypoint_classifier_labels():
     with open(
-        "test-kinivi-gesture\model\keypoint_classifier/keypoint_classifier_label.csv", encoding="utf-8-sig"
+        "test-kinivi-gesture\model\keypoint_classifier/keypoint_classifier_label.csv",
+        encoding="utf-8-sig",
     ) as f:
         keypoint_classifier_labels = csv.reader(f)
         keypoint_classifier_labels = [row[0] for row in keypoint_classifier_labels]
@@ -78,25 +79,23 @@ def test_gesture_from_video_or_folder(
     elif os.path.isfile(path):
         print(f"Processing this path as a video file: {path}")
         images = avi_to_images(path)
+        print(f"Loaded {len(images)} images")
     else:
         print(f"WARNING! This path is neither a folder nor a file: {path}")
         return
-    
-    hand_sign_string=None
-    domaint_finger_gesture_string=None
-    most_common_gesture_occurence_ratio=None
+
+    hand_sign_string = None
+    domaint_finger_gesture_string = None
+    most_common_gesture_occurence_ratio = None
 
     while True:
         # play video once
-        for image in images:
-            key = cv.waitKey(10)
-            if key == 27:  # ESC
-                return
-
+        for i,image in enumerate(images):
+            print(f'Image #{i+1}')
             image = cv.flip(image, 1)
-            debug_image = copy.deepcopy(image)
 
             image = cv.cvtColor(image, cv.COLOR_BGR2RGB)
+            debug_image = copy.deepcopy(image)
 
             image.flags.writeable = False
             results = hands.process(image)
@@ -116,7 +115,6 @@ def test_gesture_from_video_or_folder(
 
                     hand_sign_id = keypoint_classifier(pre_processed_landmark_list)
                     hand_sign_string = hand_sign_id_to_string(hand_sign_id)
-                    print(f"Current hand sign string")
 
                     if hand_sign_id == POINT_SIGN_ID:  # Point gesture
                         point_history.append(landmark_list[8])
@@ -133,7 +131,6 @@ def test_gesture_from_video_or_folder(
                     current_finger_gesture_string = finger_gesture_id_to_string(
                         finger_gesture_id
                     )
-                    print(f"Current finger gesture: {current_finger_gesture_string}")
 
                     finger_gesture_history.append(finger_gesture_id)
                     finger_gesture_history_count_info = Counter(
@@ -150,27 +147,27 @@ def test_gesture_from_video_or_folder(
                         dominant_finger_gesture_id
                     )
 
-                    debug_image = draw_bounding_rect(True, debug_image, brect)
-                    debug_image = draw_landmarks(debug_image, landmark_list)
-                    debug_image = draw_info(
-                image,
-                hand_sign_string,
-                domaint_finger_gesture_string,
-                most_common_gesture_occurence_ratio,hands_exist=True,
-            )
-                    print(f"Dominant finger gesture: {domaint_finger_gesture_string}")
+                    # debug_image = draw_bounding_rect(True, debug_image, brect)
+                    # debug_image = draw_landmarks(debug_image, landmark_list)
+                    # debug_image = draw_info(
+                    #     image,
+                    #     hand_sign_string,
+                    #     domaint_finger_gesture_string,
+                    #     most_common_gesture_occurence_ratio,
+                    #     hands_exist=True,
+                    # )
 
             else:
                 point_history.append([0, 0])
 
-                debug_image = draw_point_history_trail(debug_image, point_history)
-                debug_image = draw_info(
-                    image,
-                    hand_sign_string,
-                    domaint_finger_gesture_string,
-                    most_common_gesture_occurence_ratio,
-                    hands_exist=False,
-                )
+            # debug_image = draw_point_history_trail(debug_image, point_history)
+            # debug_image = draw_info(
+            #     image,
+            #     hand_sign_string,
+            #     domaint_finger_gesture_string,
+            #     most_common_gesture_occurence_ratio,
+            #     hands_exist=False,
+            # )
 
             cv.imshow("Hand Gesture Recognition", debug_image)
 
@@ -685,10 +682,13 @@ def draw_point_history_trail(image, point_history):
     return image
 
 
-def draw_info(image,
-        hand_sign_string,
-        domaint_finger_gesture_string,
-        most_common_gesture_occurence_ratio,hands_exist):
+def draw_info(
+    image,
+    hand_sign_string,
+    domaint_finger_gesture_string,
+    most_common_gesture_occurence_ratio,
+    hands_exist,
+):
     texts = [
         f"Hands exist: {hands_exist}",
         f"Hand sign: {hand_sign_string}",
