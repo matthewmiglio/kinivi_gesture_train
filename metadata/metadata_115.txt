@@ -1,0 +1,11 @@
+Version: 115
+Number of classes: 8
+Labels:
+	['diverse_synthetic_stop_0']
+	['diverse_synthetic_cw_1']
+	['diverse_synthetic_ccw_2']
+	['diverse_synthetic_erratic_3']
+	['diverse_synthetic_downswipe_4']
+	['diverse_synthetic_upswipe_5']
+	['diverse_synthetic_leftswipe_6']
+	['diverse_synthetic_rightswipe_7']
